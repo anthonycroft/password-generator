@@ -97,7 +97,6 @@ const getPasswordOptions = async () => {
   let responses = {}; // holds answers to various options (password criteria) presented to user
   let cancel = false; // binding for user Cancel action
   let filteredArr;
-  let answer;
 
   do {
     const result1 = await Swal.fire({
@@ -157,12 +156,12 @@ const getPasswordOptions = async () => {
       responses.special = answers[1];
     }
 
-      // get a filtered array of just the true/false values.
+      // get a filtered array of just the true/false values (i.e. omitting pasword length element)
     arr = Object.values(responses);
     filteredArr = arr.filter(x => x === true || x === false);
 
     if (!cancel && (filteredArr.filter(x => x === true).length == 0)) {
-      const result6 = await Swal.fire({
+      const result = await Swal.fire({
         title: 'uh-oh!',
         text: 'You must select at least character type. Try again?',
         icon: 'error',
@@ -170,7 +169,7 @@ const getPasswordOptions = async () => {
         confirmButtonText: `Yes`,
       });
       
-      if (result6.isDismissed) {   //  Cancel = isDimissed, No = isDenied, Yes = isConfirmed
+      if (result.isDismissed) {   //  Cancel = isDimissed, No = isDenied, Yes = isConfirmed
         cancel = true;
       }
     }
@@ -182,16 +181,14 @@ const getPasswordOptions = async () => {
 
   // return object literals
   return {
-    cancel: cancel,       // cancel was presses for any option (different to 'No')
+    cancel: cancel,       // cancel was pressed for any option (different to 'No')
     responses: responses  // responses object
   };
 }
 
 async function getUserResponse (title, text) {
 
-  let cancel = false; // binding for user cancel action
-  let value;
-  let answers = [];
+  let answers = []; // return array, where answers[0] = cancel, answers[0] = yes (include character type)
 
   // uses the Swal object to get a reponse from user
   const result = await Swal.fire({
@@ -202,12 +199,6 @@ async function getUserResponse (title, text) {
     confirmButtonText: `Yes`,
     denyButtonText: `No`,
   });
-
-  // if (result.isDismissed) {   //  Cancel = isDimissed, No = isDenied, Yes = isConfirmed
-  //   cancel = true;
-  // } else {
-  //   value = result.isConfirmed;
-  // }
 
   answers.push(result.isDismissed); // true = user cancelled
   answers.push(result.isConfirmed); // true = user selected character type
@@ -275,7 +266,7 @@ async function writePassword() {
   let options = passwordOptions.responses;
   let cancelled = passwordOptions.cancel;
 
-  // show user his selections before generating the password
+  // show user their selections before generating the password
   if (!cancelled) {
     Swal.fire(
       'All done!',
