@@ -163,7 +163,7 @@ const getPasswordOptions = async () => {
     if (!cancel && (filteredArr.filter(x => x === true).length == 0)) {
       const result = await Swal.fire({
         title: 'uh-oh!',
-        text: 'You must select at least character type. Try again?',
+        text: 'You must select at least one character type. Try again?',
         icon: 'error',
         showCancelButton: true,
         confirmButtonText: `Yes`,
@@ -216,24 +216,21 @@ function getRandom(arr) {
 function generatePassword(criteria) {
   let char = '';
   let password = '';
+  let charTypes = [];
 
   // generate array of permitted character types i.e: 
   // 'u' = uppercase (if permitted)
   // 'l' = lowercase
   // 'n' = numeric
   // 's' = sepcial characters
-  let charTypes = [];
   Object.entries(criteria).forEach(([key, value]) => {
     if (key != criteria.passwordLength && value) {
       charTypes.push(key.charAt(0))
     }
   });
-
-  console.log(charTypes)
   
   // generate the password based on allowable character types
   // and random number generator
-  console.log("Criteria password length is: " + criteria.passwordLength)
   for (; password.length < criteria.passwordLength; password += char) {
     let charType = getRandom(charTypes);
     char = '';
@@ -266,11 +263,18 @@ async function writePassword() {
   let options = passwordOptions.responses;
   let cancelled = passwordOptions.cancel;
 
+  // initialise output variable (show user their selections)
+  let output = '';
+
+  Object.entries(options).forEach(function([key, value]) {
+    output = output + key.replace("passwordLength", "Password length") + ': ' + value + ", \n";
+  });
+
   // show user their selections before generating the password
   if (!cancelled) {
     Swal.fire(
       'All done!',
-      'Your answers: ' + JSON.stringify(options),
+      'Your answers: ' + output,
       'success'
     )
 
