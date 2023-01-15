@@ -97,104 +97,69 @@ const getPasswordOptions = async () => {
   let responses = {}; // holds answers to various options (password criteria) presented to user
   let cancel = false; // binding for user Cancel action
   let filteredArr;
+  let answer;
 
   do {
-    if (!cancel) {
-      const result1 = await Swal.fire({
-        title: 'Password Length',
-        text: 'Select the length of the password (between 10 and 64 characters):',
-        input: 'range',
-        inputAttributes: {
-          min: 10,
-          max: 64,
-          step: 1
-        },
-        // confirmButtonText: 'Confirm',
-        // cancelButtonText: 'Cancel'
-        showCancelButton: true,
-        confirmButtonText: `Confirm`,
-      });
+    const result1 = await Swal.fire({
+      title: 'Password Length',
+      text: 'Select the length of the password (between 10 and 64 characters):',
+      input: 'range',
+      inputAttributes: {
+        min: 10,
+        max: 64,
+        step: 1
+      },
+      // confirmButtonText: 'Confirm',
+      // cancelButtonText: 'Cancel'
+      showCancelButton: true,
+      confirmButtonText: `Confirm`,
+    });
 
-      if (result1.isDismissed) {   //  Cancel = isDimissed, Yes = isConfirmed
-        cancel = true;
-      } else if (result1.isConfirmed){
-        responses.passwordLength = Number(result1.value);
-      }
+    if (result1.isDismissed) {   //  Cancel = isDimissed, Yes = isConfirmed
+      cancel = true;
+    } else if (result1.isConfirmed){
+      responses.passwordLength = Number(result1.value);
     }
 
     if (!cancel) {
-      const result2 = await Swal.fire({
-        title: 'Lowercase Characters',
-        text: 'Do you want to include lowercase letters?',
-        showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: `Yes`,
-        denyButtonText: `No`,
-      });
-
-      if (result2.isDismissed) {   //  Cancel = isDimissed, No = isDenied, Yes = isConfirmed
-        cancel = true;
-      } else {
-        responses.lowercase = result2.isConfirmed;
-      }
-    }
-
-    if (!cancel) {
-      const result3 = await Swal.fire({
-        title: 'Uppercase characters',
-        text: 'Do you want to include uppercase letters?',
-        showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: `Yes`,
-        denyButtonText: `No`,
-      });
-
-      if (result3.isDismissed) {   //  Cancel = isDimissed, No = isDenied, Yes = isConfirmed
-        cancel = true;
-      } else {
-        responses.uppercase = result3.isConfirmed;
-      }
-    }
-
-    if (!cancel) {
-      const result4 = await Swal.fire({
-        title: 'Numbers',
-        text: 'Do you want to include numbers?',
-        showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: `Yes`,
-        denyButtonText: `No`,
-      });
-
-      if (result4.isDismissed) {   //  Cancel = isDimissed, No = isDenied, Yes = isConfirmed
-        cancel = true;
-      } else {
-        responses.numeric = result4.isConfirmed;
-      }
+      const answers = await getUserResponse (
+        'Lowercase Characters',
+        'Do you want to include lowercase letters?',
+      )
+      cancel = answers[0];
+      responses.lowercase = answers[1];
     }
     
     if (!cancel) {
-      const result5 = await Swal.fire({
-        title: 'Special Characters',
-        text: 'Do you want to include special characters?',
-        showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: `Yes`,
-        denyButtonText: `No`,
-      });
-   
-      if (result5.isDismissed) {   //  Cancel = isDimissed, No = isDenied, Yes = isConfirmed
-        cancel = true;
-      } else {
-        responses.special = result5.isConfirmed;
-      }
+      const answers = await getUserResponse (
+        'Uppercase Characters',
+        'Do you want to include uppercase letters?',
+      )
+      cancel = answers[0];
+      responses.uppercase = answers[1];
+    }
+
+    if (!cancel) {
+      const answers = await getUserResponse (
+        'Numbers',
+        'Do you want to include numbers?',
+      )
+      cancel = answers[0];
+      responses.numeric = answers[1];
+    }
+    
+    if (!cancel) {
+      const answers = await getUserResponse (
+        'Special Characters',
+        'Do you want to include special characters ($@%&*, etc)?',
+      )
+      cancel = answers[0];
+      responses.special = answers[1];
     }
 
       // get a filtered array of just the true/false values.
     arr = Object.values(responses);
     filteredArr = arr.filter(x => x === true || x === false);
-    console.log("filteredArr is: " + filteredArr);
-    console.log("options selected include true: " + (filteredArr.filter(x => x === true).length > 0));
 
     if (!cancel && (filteredArr.filter(x => x === true).length == 0)) {
       const result6 = await Swal.fire({
@@ -222,6 +187,33 @@ const getPasswordOptions = async () => {
   };
 }
 
+async function getUserResponse (title, text) {
+
+  let cancel = false; // binding for user cancel action
+  let value;
+  let answers = [];
+
+  // uses the Swal object to get a reponse from user
+  const result = await Swal.fire({
+    title: title,
+    text: text,
+    showDenyButton: true,
+    showCancelButton: true,
+    confirmButtonText: `Yes`,
+    denyButtonText: `No`,
+  });
+
+  // if (result.isDismissed) {   //  Cancel = isDimissed, No = isDenied, Yes = isConfirmed
+  //   cancel = true;
+  // } else {
+  //   value = result.isConfirmed;
+  // }
+
+  answers.push(result.isDismissed); // true = user cancelled
+  answers.push(result.isConfirmed); // true = user selected character type
+  return answers;
+
+}
 
 // Function for getting a random element from an array
 function getRandom(arr) {
@@ -287,7 +279,7 @@ async function writePassword() {
   if (!cancelled) {
     Swal.fire(
       'All done!',
-      'Your answers: ' + options,
+      'Your answers: ' + JSON.stringify(options),
       'success'
     )
 
