@@ -30,7 +30,7 @@ https://sweetalert2.github.io/
 
 ## Screenshot:
 
-[Password Generator Home Page](https://github.com/anthonycroft/password-generator/blob/main/assets/images/password-form.png)
+![Password Generator Home Page](https://github.com/anthonycroft/password-generator/blob/main/assets/images/password-form.png)
 
 
 ## Installation
