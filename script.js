@@ -91,12 +91,10 @@ var upperCasedCharacters = [
 ];
 
 // Function to prompt user for password options
-// function getPasswordOptions() {
-
 const getPasswordOptions = async () => {
-  let responses = {}; // holds answers to various options (password criteria) presented to user
+  let responses = {}; // holds user responses
   let cancel = false; // binding for user Cancel action
-  let filteredArr;
+  let filteredArr; // sub-set of responses that holds true/false values
 
   do {
     const result1 = await Swal.fire({
@@ -108,8 +106,6 @@ const getPasswordOptions = async () => {
         max: 64,
         step: 1
       },
-      // confirmButtonText: 'Confirm',
-      // cancelButtonText: 'Cancel'
       showCancelButton: true,
       confirmButtonText: `Confirm`,
     });
@@ -156,7 +152,7 @@ const getPasswordOptions = async () => {
       responses.special = answers[1];
     }
 
-      // get a filtered array of just the true/false values (i.e. omitting pasword length element)
+      // get a filtered array of just the true/false values (i.e. omitting password length element)
     arr = Object.values(responses);
     filteredArr = arr.filter(x => x === true || x === false);
 
@@ -174,23 +170,22 @@ const getPasswordOptions = async () => {
       }
     }
 
-  // restart loop if user has not cancelled AND not requested at one least character 
-  // type from the options presented
+  // restart loop if user has not cancelled AND not requested at one least character type
    
   } while (!cancel && (filteredArr.filter(x => x === true).length == 0)) 
 
   // return object literals
   return {
-    cancel: cancel,       // cancel was pressed for any option (different to 'No')
+    cancel: cancel,       // cancel action
     responses: responses  // responses object
   };
 }
 
 async function getUserResponse (title, text) {
 
-  let answers = []; // return array, where answers[0] = cancel, answers[0] = yes (include character type)
+  let answers = []; // return array, where answers[0] = cancel action, answers[1] = true/false (include character type)
 
-  // uses the Swal object to get a reponse from user
+  // use the Swal object to get a reponse from user
   const result = await Swal.fire({
     title: title,
     text: text,
@@ -200,8 +195,8 @@ async function getUserResponse (title, text) {
     denyButtonText: `No`,
   });
 
-  answers.push(result.isDismissed); // true = user cancelled
-  answers.push(result.isConfirmed); // true = user selected character type
+  answers.push(result.isDismissed); // user cancelled ?
+  answers.push(result.isConfirmed); // user selected character type ?
   return answers;
 
 }
@@ -214,9 +209,10 @@ function getRandom(arr) {
 
 // Function to generate password from user input
 function generatePassword(criteria) {
-  let char = '';
-  let password = '';
-  let charTypes = [];
+  let char = '';  // binding for a generated password character
+  let password = ''; // binding for password
+  let charTypes = []; // binding for allowed character types
+  let charType = '' // binding for generated password character
 
   // generate array of permitted character types i.e: 
   // 'u' = uppercase (if permitted)
@@ -232,7 +228,7 @@ function generatePassword(criteria) {
   // generate the password based on allowable character types
   // and random number generator
   for (; password.length < criteria.passwordLength; password += char) {
-    let charType = getRandom(charTypes);
+    charType = getRandom(charTypes);
     char = '';
     switch (charType) {
       case 'l':
@@ -296,6 +292,3 @@ async function writePassword() {
 
 // Add event listener to generate button
 generateBtn.addEventListener('click', writePassword);
-
-
-
