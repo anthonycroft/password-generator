@@ -22,15 +22,15 @@ https://sweetalert2.github.io/
 
 ## Deployed Link:
 
-https://anthonycroft.github.io/password-generator/
+[Password Generator](https://anthonycroft.github.io/password-generator/)
 
 ## Repo Link:
 
-https://github.com/anthonycroft/password-generator
+[Repository](https://github.com/anthonycroft/password-generator)
 
 ## Screenshot:
 
-![Password Generator Home Page](https://github.com/anthonycroft/password-generator/blob/main/assets/images/password-form.png)
+[Password Generator Home Page](https://github.com/anthonycroft/password-generator/blob/main/assets/images/password-form.png)
 
 
 ## Installation
