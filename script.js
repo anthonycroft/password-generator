@@ -101,11 +101,13 @@ const getPasswordOptions = async () => {
       title: 'Password Length',
       text: 'Select the length of the password (between 10 and 64 characters):',
       input: 'range',
+      icon: 'question',
       inputAttributes: {
         min: 10,
         max: 64,
         step: 1
       },
+      inputValue: 15,
       showCancelButton: true,
       confirmButtonText: `Confirm`,
     });
@@ -160,7 +162,7 @@ const getPasswordOptions = async () => {
       const result = await Swal.fire({
         title: 'uh-oh!',
         text: 'You must select at least one character type. Try again?',
-        icon: 'error',
+        icon: 'warning',
         showCancelButton: true,
         confirmButtonText: `Yes`,
       });
@@ -189,10 +191,17 @@ async function getUserResponse (title, text) {
   const result = await Swal.fire({
     title: title,
     text: text,
+    icon: 'question',
     showDenyButton: true,
     showCancelButton: true,
     confirmButtonText: `Yes`,
-    denyButtonText: `No`,
+    denyButtonText: `No`,  
+    customClass: {
+      actions: 'my-actions',
+      cancelButton: 'order-1 right-gap',
+      confirmButton: 'order-2',
+      denyButton: 'order-3',
+    },
   });
 
   answers.push(result.isDismissed); // user cancelled ?
@@ -263,14 +272,19 @@ async function writePassword() {
   let output = '';
 
   Object.entries(options).forEach(function([key, value]) {
-    output = output + key.replace("passwordLength", "Password length") + ': ' + value + ", \n";
+    if (value==true){value = "yes"};
+    if (value==false){value = "no"};
+    output = output + key.replace("passwordLength", "Password length") + ': ' + value + ", ";
   });
+
+  // remove last ', '
+  output = output.slice(0,-2);
 
   // show user their selections before generating the password
   if (!cancelled) {
     Swal.fire(
       'All done!',
-      'Your answers: ' + output,
+      'Your selections: ' + output,
       'success'
     )
 
