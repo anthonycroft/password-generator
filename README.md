@@ -16,9 +16,9 @@ A warning is issued where at least one character type was not selected from the 
 
 ## Dependencies
 
-The app uses the SweetAlert2 library which is documented here:
+The app uses the Sweetalert2 library which is documented here:
 
-https://sweetalert2.github.io/
+[Sweetalert2](https://sweetalert2.github.io/)
 
 ## Deployed Link:
 
