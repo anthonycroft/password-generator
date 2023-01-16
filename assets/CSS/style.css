@@ -118,14 +118,14 @@ button[disabled] {
   overflow: hidden;
 }
 
-.my-actions { margin-top: 1em; margin-left: 2em; margin-right: 2em; }
-.order-1 { order: 1; }
-.order-2 { order: 2; }
-.order-3 { order: 3; }
+.my-actions { margin-top: 1em !important; margin-left: 2em !important; margin-right: 2em !important; }
+.order-1 { order: 1 !important; }
+.order-2 { order: 2 !important; }
+.order-3 { order: 3 !important; }
 
 .right-gap {
-  justify-content: flex-start;
-  margin-right: auto;
+  justify-content: flex-start !important;
+  margin-right: auto !important;
 }
 
 @media (max-width: 690px) {
