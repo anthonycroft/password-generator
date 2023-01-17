@@ -97,7 +97,7 @@ const getPasswordOptions = async () => {
   let filteredArr; // sub-set of responses that holds true/false values
 
   do {
-    const result1 = await Swal.fire({
+    const result = await Swal.fire({
       title: 'Password Length',
       text: 'Select the length of the password (between 10 and 64 characters):',
       input: 'range',
@@ -112,10 +112,10 @@ const getPasswordOptions = async () => {
       confirmButtonText: `Confirm`,
     });
 
-    if (result1.isDismissed) {   //  Cancel = isDimissed, Yes = isConfirmed
+    if (result.isDismissed) {   //  Cancel = isDimissed, Yes = isConfirmed
       cancel = true;
-    } else if (result1.isConfirmed){
-      responses.passwordLength = Number(result1.value);
+    } else if (result.isConfirmed){
+      responses.passwordLength = Number(result.value);
     }
 
     if (!cancel) {
@@ -173,7 +173,6 @@ const getPasswordOptions = async () => {
     }
 
   // restart loop if user has not cancelled AND not requested at one least character type
-   
   } while (!cancel && (filteredArr.filter(x => x === true).length == 0)) 
 
   // return object literals
@@ -218,46 +217,33 @@ function getRandom(arr) {
 
 // Function to generate password from user input
 function generatePassword(criteria) {
-  let char = '';  // binding for a generated password character
   let password = ''; // binding for password
-  let charTypes = []; // binding for allowed character types
-  let charType = '' // binding for generated password character
+  let possibleCharacters = []; // binding for generated array of selectable characters
 
-  // generate array of permitted character types i.e: 
-  // 'u' = uppercase (if permitted)
-  // 'l' = lowercase
-  // 'n' = numeric
-  // 's' = sepcial characters
   Object.entries(criteria).forEach(([key, value]) => {
     if (key != criteria.passwordLength && value) {
-      charTypes.push(key.charAt(0))
+      switch (key) {
+        case 'lowercase':
+          possibleCharacters = possibleCharacters.concat(lowerCasedCharacters);
+          break;
+        case 'uppercase':
+          possibleCharacters = possibleCharacters.concat(upperCasedCharacters);
+          break;
+        case 'numeric':
+          possibleCharacters = possibleCharacters.concat(numericCharacters);
+          break;
+        case 'special':
+          possibleCharacters = possibleCharacters.concat(specialCharacters);
+      }
     }
   });
-  
-  // generate the password based on allowable character types
-  // and random number generator
-  for (; password.length < criteria.passwordLength; password += char) {
-    charType = getRandom(charTypes);
-    char = '';
-    switch (charType) {
-      case 'l':
-        char = getRandom(lowerCasedCharacters);
-        break;
-      case 'u':
-        char = getRandom(upperCasedCharacters);
-        break;
-      case 'n':
-        char = getRandom(numericCharacters);
-        break;
-      case 's':
-        char = getRandom(specialCharacters);
-    }
+
+  // generate the password based on selected character types
+  for (let index = 0; index < criteria.passwordLength; index++) {
+    password = password + getRandom(possibleCharacters);
   }
   return password;
 }
-
-// Get references to the #generate element
-var generateBtn = document.querySelector('#generate');
 
 // Write password to the #password input
 async function writePassword() {
@@ -304,5 +290,9 @@ async function writePassword() {
   }
 }
 
+// Get references to the #generate element
+var generateBtn = document.querySelector('#generate');
+
 // Add event listener to generate button
 generateBtn.addEventListener('click', writePassword);
+
